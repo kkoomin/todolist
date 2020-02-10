@@ -1,68 +1,65 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Todo List
 
-## Available Scripts
+### Structure
 
-In the project directory, you can run:
+```
+--public
+    favicon.ico
+    index.html
+--src
+    --css
+        index.css
+    index.jsx
+    Todo.jsx
+    TodoList.jsx
+package.json
+```
 
-### `npm start`
+### Features
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- Able to create `<Todo />` component, edit todo text and delete todo component
+- Rendering `<Todo />` components in the `<TodoList />` component
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+### Code Snippets
 
-### `npm test`
+- Putting the lastest todo on top
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+  ```js
+  /* TodoList.jsx / line 13-16 */
+  itemArr.unshift({
+    text: this.input.value,
+    key: Date.now()
+  });
+  // '.unshift()' doesn't return a new array. Just modify the original one.
+  ```
 
-### `npm run build`
+- Use `.map()` to edit particular todo text and reset the state(rerender)
+- Use `.filter()` to sort out particular todo to delete and reset the state(rerender)
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- Use `onSubmit` and `<button type="submit">` to submit data with pressing enter key.
+- Set the style attribute `{display: "none"}` to the button to hide it but still able to submit with enter key even though user can't see it.
+- Make `if~else` statement to change the todo text if there's a new input or keep the original text if user didn't put any.
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+  ```js
+  /* Todo.jsx / line 28-45 */
+  <form
+    onSubmit={e => {
+      if (this.edit_input.value) {
+        this.finishEditting(id, this.edit_input.value);
+      } else {
+        this.finishEditting(id, text);
+      }
+      e.preventDefault();
+    }}
+  >
+    <input
+      className="edit-input"
+      ref={ref => (this.edit_input = ref)}
+      autoFocus
+      placeholder={text}
+    />
+    <button type="submit" style={{ display: "none" }} />
+  </form>
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+  // e.preventDefault() - to delete default action of submitting the form
+  ```
