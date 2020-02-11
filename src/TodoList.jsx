@@ -1,30 +1,56 @@
 import React from "react";
+import $ from "jquery";
 import Todo from "./Todo";
 
+const url = "http://localhost:8080";
 export default class TodoList extends React.Component {
   state = {
     items: []
   };
 
+  componentWillMount() {
+    $.get(url, data => {
+      if (data.message) {
+        this.setState({
+          items: data.result.reverse()
+        });
+        // console.log(data.result);
+      } else {
+        alert("Couldn't get the data from server");
+      }
+    });
+  }
+
   addItem = e => {
     let itemArr = this.state.items;
 
     if (this.input.value !== "") {
-      itemArr.unshift({
+      const send_param = {
         text: this.input.value,
         key: Date.now()
-      });
+      };
 
-      this.setState({
-        items: itemArr
+      $.post(`${url}/item/add`, send_param, data => {
+        if (data.message) console.log(data.message);
+
+        itemArr.unshift(send_param);
+
+        this.setState(
+          {
+            items: itemArr
+          },
+          () => console.log("done")
+        );
       });
-      this.input.value = "";
     }
+    this.input.value = "";
     e.preventDefault();
   };
 
   editItem = (key, text) => {
-    // console.log(this.state.items);
+    $.post(`${url}/item/edit`, { key, text }, data => {
+      console.log(data.message);
+    });
     const editArr = this.state.items.map(item => {
       if (item.key === key) {
         item = {
@@ -41,9 +67,16 @@ export default class TodoList extends React.Component {
   };
 
   deleteItem = key => {
-    let newItemsArr = this.state.items.filter(item => item.key !== key);
-    this.setState({
-      items: newItemsArr
+    $.post(`${url}/item/delete`, { key }, data => {
+      if (data.message) {
+        let filterdItems = this.state.items.filter(item => item.key !== key);
+
+        this.setState({
+          items: filterdItems
+        });
+      } else {
+        alert("Couldn't delete your todo 😢");
+      }
     });
   };
 
